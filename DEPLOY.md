@@ -67,6 +67,28 @@ git push -u origin main
 
 ---
 
+## 🔧 Troubleshooting: black screen on the installed app
+
+The app must always be opened once in the **normal Chrome browser** first
+(that also refreshes its offline cache).
+
+1. **Test in the normal browser:** open your Pages URL in Chrome (normal
+   tab, NOT the home-screen icon).
+   - **Login page shows?** The site is fine — the installed app just has an
+     old cached copy. Fix: long-press the app icon → **Uninstall** (or
+     Chrome ⋮ → Settings → Site settings → your Pages URL → Clear & reset),
+     then open the URL again and **Add to Home screen** once more.
+   - **404 / black there too?** The upload is wrong — make sure all 5 files
+     sit at the **root** of the repo (not inside a subfolder) and the URL
+     ends with a trailing slash: `.../recipe-phone-app/`
+2. Still broken after that? Send the exact Pages URL for inspection.
+
+> The service worker now uses network-first for pages, so once you republish
+> the updated `sw.js`, installed apps heal themselves on the next online
+> open — a reinstall is only needed if the very first install was broken.
+
+---
+
 ## ⚠️ Privacy note
 
 `index.html` embeds your recipes **and the user list with passwords** (needed
