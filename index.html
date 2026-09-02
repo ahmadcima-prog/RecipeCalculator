@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1f2937">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Recipe Management</title>
+
+    <style>
+/* Same style as static/css/style.css */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f3f4f6;
+    color: #222;
+}
+
+.top-header {
+    background: #1f2937;
+    color: white;
+    padding: 16px 20px 22px;
+    text-align: center;
+}
+
+.arabic-title {
+    direction: rtl;
+}
+
+.logout-button {
+    display: inline-block;
+    width: auto;
+    padding: 9px 16px;
+    background: #dc2626;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.logout-button:hover {
+    background: #b91c1c;
+}
+
+.user-area {
+    max-width: 1100px;
+    margin: 0 auto 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    text-align: left;
+    /* Keep user info left / buttons right in Arabic (RTL) too. */
+    direction: ltr;
+}
+
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: #f3f4f6;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 430px;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.login-header h1 {
+    color: #1f2937;
+}
+
+.login-header p {
+    margin: 5px 0 0;
+}
+
+.login-card button {
+    margin-top: 20px;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 25px auto;
+    padding: 15px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+    margin: 5px 0;
+}
+
+h2 {
+    margin-top: 0;
+}
+
+h3 {
+    margin-top: 25px;
+}
+
+label {
+    display: block;
+    margin-top: 12px;
+    font-weight: bold;
+}
+
+input,
+select,
+button {
+    width: 100%;
+    padding: 11px;
+    margin-top: 5px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+button {
+    background: #2563eb;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+button.secondary {
+    background: #6b7280;
+}
+
+button.secondary:hover {
+    background: #4b5563;
+}
+
+.company-card {
+    border-left: 5px solid #2563eb;
+}
+
+.company-title {
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.arabic {
+    direction: rtl;
+    font-size: 20px;
+    margin-top: 5px;
+}
+
+.recipe-details {
+    margin-top: 20px;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.recipe-management-table {
+    table-layout: fixed;
+}
+
+.recipe-management-table th:nth-child(1),
+.recipe-management-table th:nth-child(2),
+.recipe-management-table th:nth-child(3),
+.recipe-management-table td:nth-child(1),
+.recipe-management-table td:nth-child(2),
+.recipe-management-table td:nth-child(3) {
+    width: 22%;
+}
+
+.recipe-management-table th:nth-child(4),
+.recipe-management-table td:nth-child(4) {
+    width: 12%;
+}
+
+.recipe-management-table th:nth-child(5),
+.recipe-management-table td:nth-child(5) {
+    width: 22%;
+}
+
+.recipe-management-table td {
+    overflow-wrap: anywhere;
+    vertical-align: top;
+}
+
+th,
+td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    /* "start" = left in English (LTR), right in Arabic (RTL) */
+    text-align: start;
+}
+
+th {
+    background: #e5e7eb;
+}
+
+.message {
+    padding: 12px;
+    margin-top: 15px;
+    border-radius: 6px;
+    background: #dcfce7;
+    color: #166534;
+}
+
+.message.error {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.hidden {
+    display: none;
+}
+
+.recipe-summary h3 {
+    margin-top: 0;
+}
+
+.recipe-production-calculator {
+    margin-top: 20px;
+    padding: 16px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+}
+
+.recipe-production-calculator .calculator-row {
+    display: flex;
+    gap: 10px;
+    align-items: end;
+    margin-top: 10px;
+}
+
+.recipe-production-calculator .calculator-input-wrap {
+    flex: 0 0 180px;
+    min-width: 140px;
+}
+
+.recipe-production-calculator .calculator-button {
+    flex: 0 0 auto;
+    width: auto;
+    margin-top: 0;
+    padding: 10px 16px;
+    min-width: 110px;
+}
+
+.lang-switch{width:auto;margin:0;padding:9px 16px;background:#2563eb;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:bold;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.lang-switch:hover{background:#1d4ed8}
+.lang-switch-float{position:fixed;top:18px;right:18px;z-index:99}
+@media (max-width: 600px) {
+    .container {
+        margin: 10px;
+        padding: 5px;
+    }
+
+    .card {
+        padding: 15px;
+    }
+
+    table {
+        font-size: 14px;
+    }
+
+    th,
+    td {
+        padding: 8px 6px;
+    }
+
+    .recipe-production-calculator .calculator-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .recipe-production-calculator .calculator-input-wrap {
+        flex: 1 1 auto;
+    }
+
+    .recipe-production-calculator .calculator-button {
+        width: 100%;
+    }
+}
+    </style>
+</head>
+
+<body class="login-page">
+
+<!-- LOGIN VIEW -->
+<div id="loginView">
+
+    <button type="button" class="lang-switch lang-switch-float" onclick="toggleLang()">العربية</button>
+
+    <div class="login-card">
+
+        <div class="login-header">
+            <h1>Recipe System</h1>
+            <p>نظام الوصفات</p>
+        </div>
+
+        <form id="loginForm">
+            <label for="username" data-i18n="user">
+                User
+            </label>
+
+            <select id="username" required>
+
+                <option value="" data-i18n="select_user">
+                    Select User
+                </option>
+
+            </select>
+
+            <label for="password" data-i18n="password">
+                Password
+            </label>
+
+            <input
+                type="password"
+                id="password"
+                placeholder="Enter password"
+                data-i18n-ph="enter_password"
+                autocomplete="current-password"
+                required
+            >
+
+            <button type="submit" data-i18n="login">
+                Login / دخول
+            </button>
+
+            <div id="loginMessage" class="message hidden"></div>
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- MAIN APP (hidden until login) -->
+<header class="top-header hidden" id="appHeader">
+
+    <div class="topbar">
+
+        <div>
+            <h1>Recipe Management</h1>
+            <div class="arabic-title">إدارة الوصفات</div>
+        </div>
+
+        <div class="user-area-inner" style="display:flex;justify-content:space-between;align-items:center;gap:15px;direction:ltr;">
+            <span>
+                User:
+                <strong id="displayUsername"></strong>
+            </span>
+
+            <div style="display:flex;align-items:center;gap:10px;">
+                <button type="button" class="lang-switch" id="langSwitch" onclick="toggleLang()">العربية</button>
+                <a href="#" class="logout-button" onclick="logout(); return false;">
+                    Logout / خروج
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+</header>
+
+
+<div class="container hidden" id="appContainer">
+
+
+    <!-- =====================================================
+         COMPANY INFORMATION
+         ===================================================== -->
+
+    <div class="card company-card">
+
+        <h2 data-i18n="company">🏢 Company</h2>
+
+        <div id="companyInformation"></div>
+
+    </div>
+
+
+    <!-- =====================================================
+         RECIPE SELECTION
+         ===================================================== -->
+
+    <div class="card">
+
+        <h2 data-i18n="recipes">📋 Recipes</h2>
+
+        <label for="recipeSelect" data-i18n="select_recipe">
+            Select Recipe
+        </label>
+
+        <select id="recipeSelect" onchange="loadRecipe()">
+
+            <option value="" data-i18n="select_recipe">
+                Select Recipe
+            </option>
+
+        </select>
+
+        <div id="recipeDetails"></div>
+
+    </div>
+
+
+    <!-- =====================================================
+         RECIPE DETAILS
+         ===================================================== -->
+
+    <div
+        id="recipeDetailsCard"
+        class="card"
+        style="display:none;"
+    >
+
+        <h2 data-i18n="recipe_details">Recipe Details</h2>
+
+        <div id="recipeDetailsContent"></div>
+
+    </div>
+
+
+</div>
+
+<script>
+
+// =========================================================
+// DATA (baked in by build_calculator.py from recipe.db)
+// =========================================================
+
+var DATA = {"companies": [{"id": 2, "name_en": "Kani Mani", "name_ar": "كاني ماني"}, {"id": 1, "name_en": "Koshary", "name_ar": "كشري"}], "recipes": [{"id": 12, "company_id": 1, "name_en": "Brown Lentils & Chickpeas", "name_ar": "عدس مع حمص", "base_quantity": 36800.0, "output_quantity": 32.0, "ingredients": [{"id": 56, "name_en": "Brown Lentils", "name_ar": "عدس أسمر", "quantity": 20.0, "unit": "Kg / كجم", "remarks": ""}, {"id": 57, "name_en": "Chickpeas", "name_ar": "حمص", "quantity": 3.0, "unit": "Kg / كجم", "remarks": ""}, {"id": 58, "name_en": "Water", "name_ar": "مياه", "quantity": 13.5, "unit": "Ltr / لتر", "remarks": "حسب الحاجة"}, {"id": 59, "name_en": "Coriander Powder", "name_ar": "كزبرة", "quantity": 150.0, "unit": "gm / جرام", "remarks": ""}, {"id": 60, "name_en": "Cumin Powder", "name_ar": "كمون", "quantity": 150.0, "unit": "gm / جرام", "remarks": ""}]}, {"id": 13, "company_id": 1, "name_en": "Chickpeas", "name_ar": "حمص", "base_quantity": 15000.0, "output_quantity": 30.0, "ingredients": [{"id": 61, "name_en": "chickpeas", "name_ar": "حمص", "quantity": 15.0, "unit": "Kg / كجم", "remarks": ""}]}, {"id": 14, "company_id": 1, "name_en": "Chickpeas Water / Halabissa", "name_ar": "مياه حمص / حلبسة", "base_quantity": 54595.0, "output_quantity": 53.0, "ingredients": [{"id": 62, "name_en": "Tomatoes", "name_ar": "طماطم", "quantity": 8.75, "unit": "Kg / كجم", "remarks": ""}, {"id": 63, "name_en": "Tomato Paste", "name_ar": "معجون الطماطم", "quantity": 2.0, "unit": "PCS / عدد", "remarks": ""}, {"id": 64, "name_en": "Maggie", "name_ar": "ماجي", "quantity": 2.0, "unit": "PCS / عدد", "remarks": ""}, {"id": 65, "name_en": "Onion", "name_ar": "بصل", "quantity": 225.0, "unit": "gm / جرام", "remarks": ""}, {"id": 66, "name_en": "Minced Garlic", "name_ar": "ثوم مفروم", "quantity": 125.0, "unit": "gm / جرام", "remarks": ""}, {"id": 67, "name_en": "Cumin Powder", "name_ar": "كمون بودرة", "quantity": 25.0, "unit": "gm / جرام", "remarks": ""}, {"id": 68, "name_en": "Nutmeg", "name_ar": "جوزالطيب", "quantity": 5.0, "unit": "gm / جرام", "remarks": ""}, {"id": 69, "name_en": "Cardamom", "name_ar": "هيل", "quantity": 5.0, "unit": "gm / جرام", "remarks": ""}, {"id": 70, "name_en": "Black Pepper", "name_ar": "فلفل أسود", "quantity": 5.0, "unit": "gm / جرام", "remarks": ""}, {"id": 71, "name_en": "Bay Leaves", "name_ar": "ورق لوري", "quantity": 5.0, "unit": "gm / جرام", "remarks": ""}, {"id": 72, "name_en": "Salt", "name_ar": "ملح", "quantity": 450.0, "unit": "gm / جرام", "remarks": ""}, {"id": 73, "name_en": "Water", "name_ar": "مياه", "quantity": 45.0, "unit": "Ltr / لتر", "remarks": ""}]}, {"id": 21, "company_id": 1, "name_en": "Custard", "name_ar": "كسترد", "base_quantity": 15502.0, "output_quantity": 12.0, "ingredients": [{"id": 113, "name_en": "Milk", "name_ar": "حليب", "quantity": 11.5, "unit": "Ltr / لتر", "remarks": ""}, {"id": 114, "name_en": "Sugar", "name_ar": "سكر", "quantity": 1.75, "unit": "Kg / كجم", "remarks": ""}, {"id": 115, "name_en": "Custard Powder (1 PCS)", "name_ar": "كستر بودرة", "quantity": 450.0, "unit": "gm / جرام", "remarks": ""}, {"id": 116, "name_en": "Corn Powder", "name_ar": "نشاء", "quantity": 550.0, "unit": "gm / جرام", "remarks": ""}, {"id": 117, "name_en": "Vanilla", "name_ar": "فانيلا", "quantity": 2.0, "unit": "gm / جرام", "remarks": ""}, {"id": 118, "name_en": "Pastry Cream Liquid", "name_ar": "كريمة خفق", "quantity": 400.0, "unit": "ml / ملي", "remarks": ""}, {"id": 119, "name_en": "Water", "name_ar": "مياه", "quantity": 850.0, "unit": "ml / ملي", "remarks": "مكس مع نشاء و حسب الحاجة"}]}, {"id": 16, "company_id": 1, "name_en": "Garlic & Vinegar Sauce", "name_ar": "دقة", "base_quantity": 60100.0, "output_quantity": 60.0, "ingredients": [{"id": 79, "name_en": "Vinegar", "name_ar": "خل", "quantity": 14.0, "unit": "Ltr / لتر", "remarks": ""}, {"id": 80, "name_en": "Minced Garlic", "name_ar": "ثوم", "quantity": 800.0, "unit": "gm / جرام", "remarks": ""}, {"id": 81, "name_en": "Cumin Powder", "name_ar": "كمون بودرة", "quantity": 150.0, "unit": "gm / جرام", "remarks": ""}, {"id": 82, "name_en": "Coriander Powder", "name_ar": "كزبرة بودرة", "quantity": 150.0, "unit": "gm / جرام", "remarks": ""}, {"id": 83, "name_en": "Water", "name_ar": "مياه", "quantity": 45.0, "unit": "Ltr / لتر", "remarks": ""}]}, {"id": 15, "company_id": 1, "name_en": "Hot Sauce", "name_ar": "شطة", "base_quantity": 14050.0, "output_quantity": 11.75, "ingredients": [{"id": 74, "name_en": "Tomato Sauce", "name_ar": "صلصة", "quantity": 4.5, "unit": "Kg / كجم", "remarks": ""}, {"id": 75, "name_en": "Red Chilli Powder", "name_ar": "شطة", "quantity": 2.0, "unit": "Kg / كجم", "remarks": ""}, {"id": 76, "name_en": "Vinegar", "name_ar": "خل", "quantity": 1.5, "unit": "Ltr / لتر", "remarks": ""}, {"id": 77, "name_en": "Minced Garlic", "name_ar": "ثوم مفروم", "quantity": 50.0, "unit": "gm / جرام", "remarks": ""}, {"id": 78, "name_en": "Water", "name_ar": "مياه", "quantity": 6.0, "unit": "Ltr / لتر", "remarks": ""}]}, {"id": 23, "company_id": 1, "name_en": "Jelly", "name_ar": "جيلي ساده", "base_quantity": 20000.0, "output_quantity": 24.59, "ingredients": [{"id": 132, "name_en": "Jelly Powder", "name_ar": "جيلي بودرة (بيكت)", "quantity": 54.0, "unit": "PCS / عدد", "remarks": ""}, {"id": 133, "name_en": "Sugar", "name_ar": "سكر", "quantity": 2.0, "unit": "Kg / كجم", "remarks": ""}, {"id": 134, "name_en": "Water", "name_ar": "مياه", "quantity": 18.0, "unit": "Ltr / لتر", "remarks": ""}]}, {"id": 10, "company_id": 1, "name_en": "Macrona", "name_ar": "مكرونة", "base_quantity": 16500.0, "output_quantity": 40.0, "ingredients": [{"id": 40, "name_en": "Macrona Small", "name_ar": "مكرونة خرز", "quantity": 10.0, "unit": "Kg / كجم", "remarks": ""}, {"id": 41, "name_en": "Macrona Large", "name_ar": "مكرونة أسبغيتي", "quantity": 5.0, "unit": "Kg / كجم", "remarks": ""}, {"id": 42, "name_en": "Salt", "name_ar": "ملح", "quantity": 1.5, "unit": "Kg / كجم", "remarks": "حسب الحاجة"}, {"id": 43, "name_en": "Oil", "name_ar": "زيت", "quantity": 1.5, "unit": "Ltr / لتر", "remarks": "حسب الحاجة"}]}, {"id": 20, "company_id": 1, "name_en": "Milk Pudding", "name_ar": "مهلبية", "base_quantity": 32010.0, "output_quantity": 30.0, "ingredients": [{"id": 107, "name_en": "Milk", "name_ar": "حليب", "quantity": 24.0, "unit": "Ltr / لتر", "remarks": ""}, {"id": 108, "name_en": "Sugar", "name_ar": "سكر", "quantity": 4.5, "unit": "Kg / كجم", "remarks": ""}, {"id": 109, "name_en": "Corn Powder", "name_ar": "نشاء", "quantity": 1.75, "unit": "Kg / كجم", "remarks": ""}, {"id": 110, "name_en": "Vanilla", "name_ar": "فانيلا", "quantity": 10.0, "unit": "gm / جرام", "remarks": ""}, {"id": 111, "name_en": "Pastry Cream Liquid", "name_ar": "كريمة خفق", "quantity": 750.0, "unit": "ml / ملي", "remarks": ""}, {"id": 112, "name_en": "Water", "name_ar": "مياه", "quantity": 1.0, "unit": "Ltr / لتر", "remarks": "مكس مع نشاء و حسب الحاجة"}]}, {"id": 22, "company_id": 1, "name_en": "Om Ali", "name_ar": "أم علي", "base_quantity": 28882.0, "output_quantity": 28.0, "ingredients": [{"id": 120, "name_en": "Milk", "name_ar": "حليب", "quantity": 20.0, "unit": "Ltr / لتر", "remarks": ""}, {"id": 121, "name_en": "Puff Pastry", "name_ar": "ملفيه", "quantity": 2.0, "unit": "Kg / كجم", "remarks": ""}, {"id": 122, "name_en": "Sugar", "name_ar": "سكر", "quantity": 3.75, "unit": "Kg / كجم", "remarks": ""}, {"id": 123, "name_en": "Butter", "name_ar": "زبدة", "quantity": 100.0, "unit": "gm / جرام", "remarks": ""}, {"id": 124, "name_en": "Vanilla", "name_ar": "فانيلا", "quantity": 5.0, "unit": "gm / جرام", "remarks": ""}, {"id": 125, "name_en": "Pastry Cream Liquid", "name_ar": "كريمة خفق", "quantity": 3.0, "unit": "Ltr / لتر", "remarks": ""}, {"id": 126, "name_en": "Pastry Cream Liquid (Upper Layer)", "name_ar": "كريمة خفق (فوق الوجه)", "quantity": 2.0, "unit": "ml / ملي", "remarks": ""}, {"id": 127, "name_en": "Coconut", "name_ar": "جوزالهند", "quantity": 5.0, "unit": "gm / جرام", "remarks": ""}, {"id": 128, "name_en": "Raisin for Sweets", "name_ar": "زبيب", "quantity": 5.0, "unit": "gm / جرام", "remarks": ""}, {"id": 129, "name_en": "Pistachio", "name_ar": "فستق", "quantity": 5.0, "unit": "gm / جرام", "remarks": ""}, {"id": 130, "name_en": "Hazelnut", "name_ar": "بندق", "quantity": 5.0, "unit": "gm / جرام", "remarks": ""}, {"id": 131, "name_en": "Almond", "name_ar": "لوز", "quantity": 5.0, "unit": "gm / جرام", "remarks": ""}]}, {"id": 24, "company_id": 1, "name_en": "Pumpkin", "name_ar": "قرع عسل مربة", "base_quantity": 23000.0, "output_quantity": 18.0, "ingredients": [{"id": 135, "name_en": "Pumpkin", "name_ar": "قرع عسل", "quantity": 18.0, "unit": "Kg / كجم", "remarks": ""}, {"id": 136, "name_en": "Sugar", "name_ar": "سكر", "quantity": 3.5, "unit": "Kg / كجم", "remarks": ""}, {"id": 137, "name_en": "Water", "name_ar": "مياه", "quantity": 1.5, "unit": "Ltr / لتر", "remarks": ""}]}, {"id": 9, "company_id": 1, "name_en": "Rice & Lentils", "name_ar": "أرز مع عدس و شعرية", "base_quantity": 42000.0, "output_quantity": 80.0, "ingredients": [{"id": 34, "name_en": "Rice", "name_ar": "أرز", "quantity": 20.0, "unit": "Kg / كجم", "remarks": ""}, {"id": 35, "name_en": "Brown Lentils", "name_ar": "عدس أسمر", "quantity": 5.0, "unit": "Kg / كجم", "remarks": ""}, {"id": 36, "name_en": "Red Lentils", "name_ar": "عدس أحمر", "quantity": 5.0, "unit": "Kg / كجم", "remarks": ""}, {"id": 37, "name_en": "Spaghetti", "name_ar": "شعرية", "quantity": 10.0, "unit": "Kg / كجم", "remarks": ""}, {"id": 38, "name_en": "Salt", "name_ar": "ملح", "quantity": 2.0, "unit": "Kg / كجم", "remarks": "حسب الحاجة"}, {"id": 39, "name_en": "Oil", "name_ar": "زيت", "quantity": 2.0, "unit": "Ltr / لتر", "remarks": "حسب الحاجة"}]}, {"id": 19, "company_id": 1, "name_en": "Rice Pudding", "name_ar": "أرز بالحليب", "base_quantity": 111275.0, "output_quantity": 108.0, "ingredients": [{"id": 100, "name_en": "Milk", "name_ar": "حليب", "quantity": 84.0, "unit": "Ltr / لتر", "remarks": ""}, {"id": 101, "name_en": "Rice", "name_ar": "أرز", "quantity": 8.0, "unit": "Kg / كجم", "remarks": ""}, {"id": 102, "name_en": "Sugar", "name_ar": "سكر", "quantity": 12.25, "unit": "Kg / كجم", "remarks": ""}, {"id": 103, "name_en": "Corn Powder", "name_ar": "نشاء", "quantity": 2.0, "unit": "Kg / كجم", "remarks": ""}, {"id": 104, "name_en": "Vanilla", "name_ar": "فانيلا", "quantity": 25.0, "unit": "gm / جرام", "remarks": ""}, {"id": 105, "name_en": "Pastry Cream Liquid", "name_ar": "كريمة خفق", "quantity": 3.0, "unit": "Ltr / لتر", "remarks": ""}, {"id": 106, "name_en": "Water", "name_ar": "مياه", "quantity": 2.0, "unit": "Ltr / لتر", "remarks": "مكس مع نشاء و حسب الحاجة"}]}, {"id": 18, "company_id": 1, "name_en": "Rice Pudding Oven", "name_ar": "أرز بالحليب فرن", "base_quantity": 111278.0, "output_quantity": 108.0, "ingredients": [{"id": 92, "name_en": "Milk", "name_ar": "حليب", "quantity": 84.0, "unit": "Ltr / لتر", "remarks": ""}, {"id": 93, "name_en": "Rice", "name_ar": "أرز", "quantity": 8.0, "unit": "Kg / كجم", "remarks": ""}, {"id": 94, "name_en": "Sugar", "name_ar": "سكر", "quantity": 12.25, "unit": "Kg / كجم", "remarks": ""}, {"id": 95, "name_en": "Corn Powder", "name_ar": "نشاء", "quantity": 2.0, "unit": "Kg / كجم", "remarks": ""}, {"id": 96, "name_en": "Vanilla", "name_ar": "فانيلا", "quantity": 25.0, "unit": "gm / جرام", "remarks": ""}, {"id": 97, "name_en": "Pastry Cream Liquid", "name_ar": "كريمة خفق", "quantity": 3.0, "unit": "Ltr / لتر", "remarks": ""}, {"id": 98, "name_en": "Pastry Cream Liquid", "name_ar": "كريمة خفق", "quantity": 3.0, "unit": "ml / ملي", "remarks": "كريمة قبل الحشو و بعد الحشو"}, {"id": 99, "name_en": "Water", "name_ar": "مياه", "quantity": 2.0, "unit": "Ltr / لتر", "remarks": "مكس مع نشاء, و حسب الحاجة"}]}, {"id": 11, "company_id": 1, "name_en": "Tomato Sauce", "name_ar": "صلصة", "base_quantity": 114180.0, "output_quantity": 107.0, "ingredients": [{"id": 44, "name_en": "Tomatoes", "name_ar": "طماطم", "quantity": 100.0, "unit": "Kg / كجم", "remarks": ""}, {"id": 45, "name_en": "Oil", "name_ar": "زيت", "quantity": 2.5, "unit": "Ltr / لتر", "remarks": ""}, {"id": 46, "name_en": "Minced Garlic", "name_ar": "ثوم مفروم", "quantity": 600.0, "unit": "gm / جرام", "remarks": ""}, {"id": 47, "name_en": "Vinegar", "name_ar": "خل", "quantity": 2.0, "unit": "Ltr / لتر", "remarks": ""}, {"id": 48, "name_en": "Garlic & Vinegar Sauce", "name_ar": "دقة", "quantity": 2.5, "unit": "Ltr / لتر", "remarks": ""}, {"id": 49, "name_en": "Coriander Powder", "name_ar": "كزبرة", "quantity": 40.0, "unit": "gm / جرام", "remarks": ""}, {"id": 50, "name_en": "Fried Onion", "name_ar": "تقلية", "quantity": 3.0, "unit": "Kg / كجم", "remarks": ""}, {"id": 51, "name_en": "Salt", "name_ar": "ملح", "quantity": 1.5, "unit": "Kg / كجم", "remarks": ""}, {"id": 52, "name_en": "Sugar", "name_ar": "سكر", "quantity": 400.0, "unit": "gm / جرام", "remarks": ""}, {"id": 53, "name_en": "Minced Garlic", "name_ar": "ثوم مفروم", "quantity": 500.0, "unit": "gm / جرام", "remarks": ""}, {"id": 54, "name_en": "Spices", "name_ar": "بهارات", "quantity": 140.0, "unit": "gm / جرام", "remarks": ""}, {"id": 55, "name_en": "Water", "name_ar": "مياه", "quantity": 1.0, "unit": "Ltr / لتر", "remarks": ""}]}, {"id": 25, "company_id": 2, "name_en": "Basboosa", "name_ar": "بسبوسة", "base_quantity": 39250.0, "output_quantity": 35.0, "ingredients": [{"id": 138, "name_en": "Semolina", "name_ar": "سميد", "quantity": 10.0, "unit": "Kg / كيلو جرام", "remarks": ""}, {"id": 139, "name_en": "Pastry Cream Liquid", "name_ar": "كريمة خفق", "quantity": 1.5, "unit": "Ltr / لتر", "remarks": ""}, {"id": 140, "name_en": "Milk", "name_ar": "حليب", "quantity": 3.0, "unit": "Ltr / لتر", "remarks": ""}, {"id": 141, "name_en": "Sugar", "name_ar": "سكر", "quantity": 6.0, "unit": "Kg / كيلو جرام", "remarks": ""}, {"id": 142, "name_en": "Butter Ghee", "name_ar": "سمنة", "quantity": 3.0, "unit": "Kg / كيلو جرام", "remarks": ""}, {"id": 143, "name_en": "Glucose", "name_ar": "جلوكوز", "quantity": 250.0, "unit": "gm / جرام", "remarks": ""}, {"id": 144, "name_en": "Basboosa Sweetener", "name_ar": "عسل بسبوسة", "quantity": 15.0, "unit": "Ltr / لتر", "remarks": ""}, {"id": 145, "name_en": "Taheena & Butter (Mix)", "name_ar": "مكس طحينة مع زبدة", "quantity": 500.0, "unit": "gm / جرام", "remarks": ""}]}, {"id": 26, "company_id": 2, "name_en": "Kunafa", "name_ar": "كنافة ساده", "base_quantity": 3850.0, "output_quantity": 3.45, "ingredients": [{"id": 146, "name_en": "Kunafa", "name_ar": "كنافة", "quantity": 1.5, "unit": "Kg / كيلو جرام", "remarks": ""}, {"id": 147, "name_en": "Sugar Powder", "name_ar": "سكر بودرة", "quantity": 25.0, "unit": "gm / جرام", "remarks": ""}, {"id": 148, "name_en": "Butter Ghee", "name_ar": "سمنة", "quantity": 825.0, "unit": "gm / جرام", "remarks": ""}, {"id": 149, "name_en": "Sweetener", "name_ar": "عسل شرقي", "quantity": 1.5, "unit": "Ltr / لتر", "remarks": ""}]}, {"id": 27, "company_id": 2, "name_en": "Kunafa Butter Cream", "name_ar": "كنافة بالقشطة", "base_quantity": 5825.0, "output_quantity": 4.75, "ingredients": [{"id": 150, "name_en": "Kunafa", "name_ar": "كنافة", "quantity": 1.6, "unit": "Kg / كيلو جرام", "remarks": ""}, {"id": 151, "name_en": "Butter Cream", "name_ar": "قشطة", "quantity": 1.9, "unit": "Kg / كيلو جرام", "remarks": ""}, {"id": 152, "name_en": "Sugar Powder", "name_ar": "سكر بودرة", "quantity": 25.0, "unit": "gm / جرام", "remarks": ""}, {"id": 153, "name_en": "Butter Ghee", "name_ar": "سمنة", "quantity": 800.0, "unit": "gm / جرام", "remarks": ""}, {"id": 154, "name_en": "Sweetener", "name_ar": "عسل شرقي", "quantity": 1.5, "unit": "Ltr / لتر", "remarks": ""}]}, {"id": 32, "company_id": 2, "name_en": "Kunafa Mango Small", "name_ar": "كنافة بالمانجة صغير", "base_quantity": 270.0, "output_quantity": 270.0, "ingredients": [{"id": 180, "name_en": "Kunafa Ready", "name_ar": "كنافة شعر جاهز مع عسل", "quantity": 40.0, "unit": "gm / جرام", "remarks": ""}, {"id": 181, "name_en": "Cream Shanti Ready", "name_ar": "كريمة شانتي", "quantity": 40.0, "unit": "gm / جرام", "remarks": ""}, {"id": 182, "name_en": "Mangoes Pieces", "name_ar": "مانجة", "quantity": 150.0, "unit": "gm / جرام", "remarks": ""}, {"id": 183, "name_en": "Mango Juice", "name_ar": "عصير مانجة", "quantity": 25.0, "unit": "gm / جرام", "remarks": ""}, {"id": 184, "name_en": "Jelly Ready", "name_ar": "جيلي جاهز", "quantity": 15.0, "unit": "gm / جرام", "remarks": ""}]}, {"id": 33, "company_id": 2, "name_en": "Kunafa Mangoes Medium", "name_ar": "كنافة بالمانجة وسط", "base_quantity": 495.0, "output_quantity": 500.0, "ingredients": [{"id": 185, "name_en": "Kunafa Ready", "name_ar": "كنافة شعر جاهز مع عسل", "quantity": 50.0, "unit": "gm / جرام", "remarks": ""}, {"id": 186, "name_en": "Cream Shanti", "name_ar": "كريمة شانتي", "quantity": 110.0, "unit": "gm / جرام", "remarks": ""}, {"id": 187, "name_en": "Mangoes", "name_ar": "مانجة", "quantity": 280.0, "unit": "gm / جرام", "remarks": ""}, {"id": 188, "name_en": "Mango Juice", "name_ar": "عصير مانجة", "quantity": 25.0, "unit": "gm / جرام", "remarks": ""}, {"id": 189, "name_en": "Jelly Ready", "name_ar": "جيلي جاهز", "quantity": 30.0, "unit": "gm / جرام", "remarks": ""}]}, {"id": 28, "company_id": 2, "name_en": "Kunafa Mixed Nuts", "name_ar": "كنافة مكسرات", "base_quantity": 5572.0, "output_quantity": 5.0, "ingredients": [{"id": 155, "name_en": "Kunafa", "name_ar": "كنافة", "quantity": 1.6, "unit": "Kg / كيلو جرام", "remarks": ""}, {"id": 156, "name_en": "Sugar Powder", "name_ar": "سكر بودرة", "quantity": 25.0, "unit": "gm / جرام", "remarks": ""}, {"id": 157, "name_en": "Mixed Nuts", "name_ar": "مكسرات مشكل", "quantity": 1.3, "unit": "Kg / كيلو جرام", "remarks": ""}, {"id": 158, "name_en": "Butter Ghee", "name_ar": "سمنة", "quantity": 850.0, "unit": "gm / جرام", "remarks": ""}, {"id": 159, "name_en": "Sweetener", "name_ar": "عسل شرقي", "quantity": 1.797, "unit": "Ltr / لتر", "remarks": ""}]}, {"id": 29, "company_id": 2, "name_en": "Kunafa Usmalia", "name_ar": "كنافة عثمائلية", "base_quantity": 2710.0, "output_quantity": 2.5, "ingredients": [{"id": 160, "name_en": "Kunafa", "name_ar": "كنافة", "quantity": 800.0, "unit": "gm / جرام", "remarks": ""}, {"id": 161, "name_en": "Butter Cream", "name_ar": "قشطة", "quantity": 1.2, "unit": "Kg / كيلو جرام", "remarks": ""}, {"id": 162, "name_en": "Sugar Powder", "name_ar": "سكر بودرة", "quantity": 10.0, "unit": "gm / جرام", "remarks": ""}, {"id": 163, "name_en": "Butter Ghee", "name_ar": "سمنة", "quantity": 150.0, "unit": "gm / جرام", "remarks": ""}, {"id": 164, "name_en": "Sweetener", "name_ar": "عسل شرقي", "quantity": 300.0, "unit": "ml / ملي", "remarks": ""}, {"id": 165, "name_en": "Pistachio", "name_ar": "فستق", "quantity": 250.0, "unit": "gm / جرام", "remarks": ""}]}, {"id": 30, "company_id": 2, "name_en": "Mudaala", "name_ar": "المدلعة", "base_quantity": 7255.0, "output_quantity": 6.5, "ingredients": [{"id": 166, "name_en": "Kunafa", "name_ar": "كتفة", "quantity": 800.0, "unit": "gm / جرام", "remarks": ""}, {"id": 167, "name_en": "Butter Ghee", "name_ar": "سمنة", "quantity": 300.0, "unit": "gm / جرام", "remarks": ""}, {"id": 168, "name_en": "Sugar Powder", "name_ar": "سكر بودرة", "quantity": 25.0, "unit": "gm / جرام", "remarks": ""}, {"id": 169, "name_en": "Sweetener", "name_ar": "عسل شرقي", "quantity": 650.0, "unit": "ml / ملي", "remarks": ""}, {"id": 170, "name_en": "Basboosa Ready", "name_ar": "بسبوسة جاهز", "quantity": 3.65, "unit": "Kg / كيلو جرام", "remarks": ""}, {"id": 171, "name_en": "Cream Shanti", "name_ar": "كريمة شانتي", "quantity": 900.0, "unit": "gm / جرام", "remarks": ""}, {"id": 172, "name_en": "Toffee Cream (Diamond Glaze Caramel)", "name_ar": "كريم كرامل (جيلي بارد)", "quantity": 830.0, "unit": "gm / جرام", "remarks": ""}, {"id": 173, "name_en": "White Chocolate Sauce", "name_ar": "صوص شوكلاتة أبيض", "quantity": 50.0, "unit": "gm / جرام", "remarks": ""}, {"id": 174, "name_en": "Dark Chocolate Sauce", "name_ar": "شوكلاته غامق سائلة", "quantity": 50.0, "unit": "gm / جرام", "remarks": ""}]}, {"id": 31, "company_id": 2, "name_en": "Mudalla Forma - Oranges", "name_ar": "المدلعة فورمة - برتقال", "base_quantity": 640.0, "output_quantity": 640.0, "ingredients": [{"id": 175, "name_en": "Kunafa Ready", "name_ar": "كنافة جاهز", "quantity": 90.0, "unit": "gm / جرام", "remarks": ""}, {"id": 176, "name_en": "Basboosa Ready", "name_ar": "بسبوسة جاهز", "quantity": 260.0, "unit": "gm / جرام", "remarks": ""}, {"id": 177, "name_en": "Cream Shanti", "name_ar": "كريمة شانتي", "quantity": 90.0, "unit": "gm / جرام", "remarks": ""}, {"id": 178, "name_en": "Oranges", "name_ar": "برتقال يوسفي / أسفندي", "quantity": 175.0, "unit": "gm / جرام", "remarks": ""}, {"id": 179, "name_en": "Jelly Ready", "name_ar": "جيلي جاهز", "quantity": 25.0, "unit": "gm / جرام", "remarks": ""}]}], "users": [{"id": 1, "username": "admin", "password": "admin123", "company_id": null, "role": "admin"}, {"id": 3, "username": "Kani Mani", "password": "kanimani123", "company_id": 2, "role": "company"}, {"id": 532, "username": "Koshary-Kitchen", "password": "1234", "company_id": 1, "role": "company"}, {"id": 533, "username": "Koshary-Halwani", "password": "1234", "company_id": 1, "role": "company"}, {"id": 534, "username": "Koshary-Manager", "password": "1234", "company_id": 1, "role": "company"}, {"id": 536, "username": "Koshary", "password": "1234", "company_id": 1, "role": "company"}]};
+
+
+// =========================================================
+// LANGUAGE SWITCHER (English / العربية)
+// =========================================================
+
+var LANG = "en";
+
+var I18N = {
+    user:               { en: "User",            ar: "المستخدم" },
+    select_user:        { en: "Select User",     ar: "اختر المستخدم" },
+    password:           { en: "Password",        ar: "كلمة المرور" },
+    enter_password:     { en: "Enter password",  ar: "أدخل كلمة المرور" },
+    login:              { en: "Login",           ar: "دخول" },
+    invalid_login:      { en: "Invalid username or password.", ar: "اسم المستخدم أو كلمة المرور غير صحيحة." },
+    company:            { en: "🏢 Company",      ar: "🏢 الشركة" },
+    recipes:            { en: "📋 Recipes",      ar: "📋 الوصفات" },
+    select_recipe:      { en: "Select Recipe",   ar: "اختر الوصفة" },
+    recipe_details:     { en: "Recipe Details",  ar: "تفاصيل الوصفة" },
+    standard_input:     { en: "Standard Input Quantity:", ar: "كمية الإدخال القياسية:" },
+    output_qty:         { en: "Output Quantity:", ar: "كمية الإنتاج:" },
+    yield_l:            { en: "Yield:",          ar: "نسبة الإنتاج:" },
+    prod_calc:          { en: "Production Calculator", ar: "حاسبة الإنتاج" },
+    base_ingredient:    { en: "Base Ingredient", ar: "المكون الأساسي" },
+    use_qty_produce:    { en: "Use Quantity to produce", ar: "استخدم كمية الإنتاج" },
+    qty_produce:        { en: "Quantity to produce", ar: "الكمية المطلوب إنتاجها" },
+    qty_for:            { en: "Quantity for",    ar: "الكمية بالنسبة لـ" },
+    enter_qty_produce:  { en: "Enter quantity to produce", ar: "أدخل الكمية المطلوبة" },
+    enter_qty_in:       { en: "Enter quantity in", ar: "أدخل الكمية بـ" },
+    calculate:          { en: "Calculate",       ar: "احسب" },
+    clear:              { en: "Clear",           ar: "مسح" },
+    col_ingredient:     { en: "Ingredient",      ar: "المكون" },
+    col_arabic:         { en: "Arabic",          ar: "بالعربية" },
+    col_quantity:       { en: "Quantity",        ar: "الكمية" },
+    col_unit:           { en: "Unit",            ar: "الوحدة" },
+    col_remarks:        { en: "Remarks",         ar: "ملاحظات" },
+    col_calc_qty:       { en: "Calculated Quantity", ar: "الكمية المحسوبة" },
+    invalid_qty_msg:    { en: "Enter a valid quantity to produce.", ar: "أدخل كمية صحيحة للإنتاج." },
+    scaling_msg:        { en: "Calculated using a scaling factor of", ar: "تم الحساب بمعامل تحجيم" }
+};
+
+function t(key) {
+    var entry = I18N[key];
+    if (!entry) { return key; }
+    return entry[LANG] || entry.en;
+}
+
+
+// Show the name matching the selected language.
+
+function nameByLang(nameEn, nameAr) {
+    return LANG === "ar"
+        ? (nameAr || nameEn || "")
+        : (nameEn || nameAr || "");
+}
+
+
+// Show units per language. Supports the "Kg / كيلو" format.
+
+function unitText(unit) {
+    var value = String(unit || "").trim();
+
+    if (value.indexOf("/") !== -1) {
+        var parts = value.split("/");
+        return LANG === "ar"
+            ? (parts[1] || parts[0]).trim()
+            : parts[0].trim();
+    }
+
+    // Translate the standard units in Arabic mode.
+
+    if (LANG === "ar") {
+        var standardUnits = {
+            "kg": "كجم",
+            "g": "جرام",
+            "gram": "جرام",
+            "liter": "لتر",
+            "litre": "لتر",
+            "pcs": "حبة",
+            "piece": "حبة"
+        };
+
+        var key = value.toLowerCase();
+
+        if (standardUnits[key]) {
+            return standardUnits[key];
+        }
+    }
+
+    return value;
+}
+
+// =========================================================
+// SMART UNIT CONVERSION (gm <-> Kg, ml <-> Ltr)
+// (same as static/css/script.js)
+// =========================================================
+
+// English storage key of a unit ("Gram / جرام" -> "gram").
+
+function unitKey(unit) {
+    const value = String(unit || "").trim();
+    const englishPart = value.indexOf("/") !== -1
+        ? value.split("/")[0].trim()
+        : value;
+    return englishPart.toLowerCase();
+}
+
+// Decide the best unit to display a quantity in:
+// 1000+ gm -> Kg, 1000+ ml -> Ltr, below 1 Kg -> gm and
+// below 1 Ltr -> ml. Everything else stays unchanged.
+
+function smartDisplay(quantity, unit) {
+
+    const value = Number(quantity) || 0;
+    const key = unitKey(unit);
+
+    const massSmall = ["g", "gm", "gram", "grams"];
+    const volumeSmall = ["ml", "milliliter", "millilitre"];
+    const massLarge = ["kg", "kgs", "kilogram", "kilograms"];
+    const volumeLarge = ["l", "ltr", "liter", "litre", "liters", "litres"];
+
+    if (massSmall.indexOf(key) !== -1 && value >= 1000) {
+        return { value: value / 1000, unit: "Kg / كجم" };
+    }
+
+    if (volumeSmall.indexOf(key) !== -1 && value >= 1000) {
+        return { value: value / 1000, unit: "Ltr / لتر" };
+    }
+
+    if (massLarge.indexOf(key) !== -1 && value > 0 && value < 1) {
+        return { value: value * 1000, unit: "gm / جم" };
+    }
+
+    if (volumeLarge.indexOf(key) !== -1 && value > 0 && value < 1) {
+        return { value: value * 1000, unit: "ml / مل" };
+    }
+
+    return { value: value, unit: String(unit || "").trim() };
+
+}
+
+// Format a quantity with at most two decimal places ("4.673" ->
+// "4.67", "100" stays "100"). Same behavior as static/css/script.js.
+
+function formatQuantity(value) {
+
+    const fixed = Number(value || 0).toFixed(2);
+
+    return fixed.indexOf(".") !== -1
+        ? fixed.replace(/0+$/, "").replace(/\.$/, "")
+        : fixed;
+
+}
+
+function getSavedLang() {
+    try {
+        return localStorage.getItem("calcLang") || "en";
+    } catch (e) {
+        return "en";
+    }
+}
+
+function saveLang(lang) {
+    try {
+        localStorage.setItem("calcLang", lang);
+    } catch (e) { /* ignore */ }
+}
+
+function applyLang() {
+    document.documentElement.lang = LANG;
+    document.documentElement.dir = LANG === "ar" ? "rtl" : "ltr";
+
+    document.querySelectorAll("[data-i18n]").forEach(function (el) {
+        el.textContent = t(el.dataset.i18n);
+    });
+
+    document.querySelectorAll("[data-i18n-ph]").forEach(function (el) {
+        el.placeholder = t(el.dataset.i18nPh);
+    });
+
+    document.querySelectorAll(".lang-switch").forEach(function (btn) {
+        btn.textContent = LANG === "en" ? "🌐 العربية" : "🌐 English";
+    });
+}
+
+function toggleLang() {
+    LANG = LANG === "en" ? "ar" : "en";
+    saveLang(LANG);
+    location.reload();
+}
+
+
+
+// =========================================================
+// COMMON HELPERS  (same as static/css/script.js)
+// =========================================================
+
+function escapeHtml(value) {
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+
+}
+
+
+function showMessage(elementId, text, isError) {
+
+    const element = document.getElementById(elementId);
+
+    if (!element) {
+        return;
+    }
+
+    element.textContent = text;
+
+    element.classList.remove("hidden");
+    element.classList.toggle("error", Boolean(isError));
+
+}
+
+
+function calculateYieldPercentage(inputQuantity, outputQuantity) {
+
+    const input = Number(inputQuantity);
+    const output = Number(outputQuantity);
+
+    if (!input || input <= 0 || !output || output < 0) {
+        return "0.00";
+    }
+
+    return formatQuantity(output / input * 100);
+
+}
+
+
+function calculateProductionScale(targetQuantity, standardOutput) {
+
+    const target = Number(targetQuantity);
+    const standard = Number(standardOutput);
+
+    if (!target || target <= 0 || !standard || standard <= 0) {
+        return null;
+    }
+
+    return target / standard;
+
+}
+
+
+// =========================================================
+// LOGIN  (same as login page in the Flask app)
+// =========================================================
+
+var currentUser = null;
+
+var selectedCompanyId = null;
+
+
+function initLoginPage() {
+
+    const usernameSelect =
+        document.getElementById("username");
+
+    const loginForm =
+        document.getElementById("loginForm");
+
+    usernameSelect.innerHTML =
+        '<option value="">' + t("select_user") + '</option>';
+
+    DATA.users.forEach(function (user) {
+
+        const option =
+            document.createElement("option");
+
+        option.value =
+            user.username;
+
+        option.textContent =
+            user.username;
+
+        usernameSelect.appendChild(option);
+
+    });
+
+    loginForm.addEventListener(
+        "submit",
+        function (event) {
+
+            event.preventDefault();
+
+            const username =
+                document.getElementById("username").value;
+
+            const password =
+                document.getElementById("password").value;
+
+            const user = DATA.users.filter(function (u) {
+                return u.username === username;
+            })[0];
+
+            if (!user || user.password !== password) {
+                showMessage(
+                    "loginMessage",
+                    t("invalid_login"),
+                    true
+                );
+                return;
+            }
+
+            showMessage("loginMessage", "");
+
+            currentUser = user;
+
+            selectedCompanyId = user.company_id;
+
+            enterApp();
+
+        }
+    );
+
+}
+
+
+function enterApp() {
+
+    document.body.classList.remove("login-page");
+
+    document.getElementById("loginView").classList.add("hidden");
+
+    document.getElementById("appHeader").classList.remove("hidden");
+
+    document.getElementById("appContainer").classList.remove("hidden");
+
+    document.getElementById("displayUsername").textContent =
+        currentUser.username;
+
+    document.getElementById("password").value = "";
+
+    initPage();
+
+}
+
+
+function logout() {
+
+    currentUser = null;
+
+    selectedCompanyId = null;
+
+    document.getElementById("recipeSelect").value = "";
+
+    document.getElementById("recipeDetailsCard").style.display = "none";
+
+    document.getElementById("recipeDetailsContent").innerHTML = "";
+
+    document.getElementById("recipeDetails").innerHTML = "";
+
+    document.getElementById("appHeader").classList.add("hidden");
+
+    document.getElementById("appContainer").classList.add("hidden");
+
+    document.getElementById("loginView").classList.remove("hidden");
+
+    document.getElementById("password").value = "";
+
+    document.getElementById("loginMessage").classList.add("hidden");
+
+    document.body.classList.add("login-page");
+
+}
+
+
+// =========================================================
+// RECIPE SELECTION  (filtered by the logged-in user's company)
+// =========================================================
+
+function initPage() {
+
+    const recipeSelect =
+        document.getElementById("recipeSelect");
+
+    const companyInformation =
+        document.getElementById("companyInformation");
+
+    // Only the logged-in user's company recipes are shown.
+    // Admin (no company) sees all companies.
+
+    let visibleRecipes = DATA.recipes;
+
+    let visibleCompanies = DATA.companies;
+
+    if (currentUser && currentUser.role !== "admin" && currentUser.company_id) {
+
+        visibleRecipes = DATA.recipes.filter(function (r) {
+            return r.company_id === currentUser.company_id;
+        });
+
+        visibleCompanies = DATA.companies.filter(function (c) {
+            return c.id === currentUser.company_id;
+        });
+
+    }
+
+    let html = "";
+
+    visibleCompanies.forEach(function (company) {
+
+        html +=
+            '<div class="company-title">' +
+                escapeHtml(company.name_en) +
+            '</div>' +
+            '<div class="arabic">' +
+                escapeHtml(company.name_ar) +
+            '</div>';
+
+    });
+
+    companyInformation.innerHTML = html;
+
+    recipeSelect.innerHTML =
+        '<option value="">Select Recipe</option>';
+
+
+    visibleRecipes.forEach(function (recipe) {
+
+        const option =
+            document.createElement("option");
+
+        option.value =
+            recipe.id;
+
+        option.textContent =
+            nameByLang(recipe.name_en, recipe.name_ar);
+
+        recipeSelect.appendChild(
+            option
+        );
+
+    });
+
+}
+
+
+// =========================================================
+// LOAD RECIPE
+// =========================================================
+
+function loadRecipe() {
+
+    const recipeId =
+        document.getElementById("recipeSelect").value;
+
+
+    document.getElementById("recipeDetailsCard").style.display = "none";
+
+    document.getElementById("recipeDetailsContent").innerHTML = "";
+
+
+    if (!recipeId) {
+        return;
+    }
+
+
+    const recipe = DATA.recipes.filter(function (r) {
+        return String(r.id) === String(recipeId);
+    })[0];
+
+
+    if (!recipe) {
+        return;
+    }
+
+
+    renderRecipe(recipe);
+
+}
+
+
+
+
+// =========================================================
+// RECIPE DISPLAY
+// (same layout as renderRecipe user-mode in script.js)
+// =========================================================
+
+function renderRecipe(recipe) {
+
+    const target = document.getElementById("recipeDetailsContent");
+
+    const ingredients = recipe.ingredients;
+
+    let html = `
+        <div class="recipe-summary">
+            <h3>${escapeHtml(nameByLang(recipe.name_en, recipe.name_ar))}</h3>
+        </div>
+    `;
+
+    html += `
+        <div class="recipe-production-calculator">
+            <h3>${t("prod_calc")}</h3>
+
+            <label for="recipeBaseIngredient-${recipe.id}">${t("base_ingredient")}</label>
+
+            <select id="recipeBaseIngredient-${recipe.id}" onchange="updateProductionInputMode(${recipe.id})">
+                <option value="">${t("use_qty_produce")}</option>
+                ${ingredients.map(function (ingredient) {
+                    return `<option value="${ingredient.id}" data-standard-quantity="${escapeHtml(String(ingredient.quantity))}" data-unit="${escapeHtml(String(ingredient.unit))}">${escapeHtml(nameByLang(ingredient.name_en, ingredient.name_ar))}</option>`;
+                }).join("")}
+            </select>
+
+            <label id="recipeTargetLabel-${recipe.id}" for="recipeTargetOutput-${recipe.id}">${t("qty_produce")}</label>
+
+            <div class="calculator-row">
+                <div class="calculator-input-wrap">
+                    <input
+                        type="number"
+                        id="recipeTargetOutput-${recipe.id}"
+                        data-standard-output="${escapeHtml(String(recipe.output_quantity))}"
+                        min="0"
+                        step="0.001"
+                        placeholder="${t("enter_qty_produce")}"
+                        oninput="onTargetOutputInput(${recipe.id})"
+                    >
+                </div>
+
+                <button
+                    type="button"
+                    class="calculator-button"
+                    onclick="calculateUserProduction(${recipe.id})"
+                >
+                    ${t("calculate")}
+                </button>
+
+                <button
+                    type="button"
+                    class="calculator-button secondary"
+                    onclick="clearUserProduction(${recipe.id})"
+                >
+                    ${t("clear")}
+                </button>
+            </div>
+
+            <div id="recipeProductionResult-${recipe.id}" class="message hidden"></div>
+        </div>
+    `;
+
+    html += `
+        <div class="table-wrapper">
+            <table class="recipe-management-table">
+                <thead>
+                    <tr>
+                        <th>${t("col_ingredient")}</th>
+                        <th id="quantityHeader-${recipe.id}">${t("col_quantity")}</th>
+                        <th>${t("col_unit")}</th>
+                        <th>${t("col_remarks")}</th>
+                        <th id="calculatedQuantityHeader-${recipe.id}" class="hidden">${t("col_calc_qty")}</th>
+                    </tr>
+                </thead>
+                <tbody>
+    `;
+
+    ingredients.forEach(function (ingredient) {
+
+        html += `
+            <tr>
+                <td>${escapeHtml(nameByLang(ingredient.name_en, ingredient.name_ar))}</td>
+                <td class="qty-cell">${escapeHtml(String(ingredient.quantity))}</td>
+                <td class="unit-cell">${escapeHtml(unitText(ingredient.unit))}</td>
+                <td>${escapeHtml(ingredient.remarks || "")}</td>
+                <td class="calculated-quantity-cell hidden">
+                    <span
+                        class="user-calculated-qty"
+                        data-recipe-id="${recipe.id}"
+                        data-ingredient-id="${ingredient.id}"
+                        data-standard-quantity="${escapeHtml(String(ingredient.quantity))}"
+                        data-standard-unit="${escapeHtml(String(ingredient.unit))}"
+                    ></span>
+                </td>
+            </tr>
+        `;
+
+    });
+
+    html += `
+                </tbody>
+            </table>
+        </div>
+    `;
+
+    document.getElementById("recipeDetailsCard").style.display = "";
+
+    target.innerHTML = html;
+
+}
+
+
+// =========================================================
+// PRODUCTION CALCULATOR
+// (same as script.js user mode)
+// =========================================================
+
+function updateProductionInputMode(recipeId) {
+
+    const baseIngredientSelect = document.getElementById(
+        "recipeBaseIngredient-" + recipeId
+    );
+
+    const label = document.getElementById(
+        "recipeTargetLabel-" + recipeId
+    );
+
+    const input = document.getElementById(
+        "recipeTargetOutput-" + recipeId
+    );
+
+    const option =
+        baseIngredientSelect &&
+        baseIngredientSelect.selectedOptions[0];
+
+    const unit = option ? option.dataset.unit : "";
+
+    if (option && option.value) {
+        label.textContent = t("qty_for") + " " + option.textContent;
+        input.placeholder = t("enter_qty_in") + (unit ? " " + unit : "");
+    }
+    else {
+        label.textContent = t("qty_produce");
+        input.placeholder = t("enter_qty_produce");
+    }
+
+}
+
+
+function onTargetOutputInput(recipeId) {
+
+    const targetInput = document.getElementById(
+        "recipeTargetOutput-" + recipeId
+    );
+
+    // When the "quantity to produce" box is emptied, bring back
+    // the standard recipe quantities.
+    if (targetInput && targetInput.value.trim() === "") {
+        clearUserProduction(recipeId);
+    }
+
+}
+
+
+function calculateUserProduction(recipeId) {
+
+    const baseIngredientSelect = document.getElementById(
+        "recipeBaseIngredient-" + recipeId
+    );
+
+    const targetInput = document.getElementById(
+        "recipeTargetOutput-" + recipeId
+    );
+
+    const resultBox = document.getElementById(
+        "recipeProductionResult-" + recipeId
+    );
+
+    if (!targetInput || !resultBox) {
+        return;
+    }
+
+    const selectedBaseOption =
+        baseIngredientSelect &&
+        baseIngredientSelect.selectedOptions[0];
+
+    const hasBaseIngredient = Boolean(
+        selectedBaseOption && selectedBaseOption.value
+    );
+
+    let scale;
+    const targetQuantity = Number(targetInput.value);
+
+    if (hasBaseIngredient) {
+        const standardBaseQuantity = Number(
+            selectedBaseOption.dataset.standardQuantity
+        );
+
+        scale = calculateProductionScale(
+            targetQuantity,
+            standardBaseQuantity
+        );
+    }
+    else {
+        const standardOutput = Number(targetInput.dataset.standardOutput);
+
+        scale = calculateProductionScale(
+            targetQuantity,
+            standardOutput
+        );
+    }
+
+    if (scale === null) {
+        showMessage(
+            "recipeProductionResult-" + recipeId,
+            t("invalid_qty_msg"),
+            true
+        );
+        return;
+    }
+
+    const ingredientRows = document.querySelectorAll(
+        ".user-calculated-qty[data-recipe-id='" + recipeId + "']"
+    );
+
+    ingredientRows.forEach(function (row) {
+        const tr = row.closest("tr");
+        const qtyCell = tr ? tr.querySelector(".qty-cell") : null;
+        const standardQuantity = Number(
+            row.dataset.standardQuantity
+        );
+        const unit = row.dataset.standardUnit || "";
+        const calculatedQuantity = standardQuantity * scale;
+
+        const isSelectedBase =
+            hasBaseIngredient &&
+            row.dataset.ingredientId === selectedBaseOption.value;
+
+        const rawValue = isSelectedBase
+            ? targetQuantity
+            : calculatedQuantity;
+
+        // Smart unit display: 1000+ gm -> Kg, 1000+ ml -> Ltr,
+        // and back below one Kg / Ltr.
+        const smart = smartDisplay(rawValue, unit);
+        const displayValue = formatQuantity(smart.value);
+
+        // The Calculated Quantity column shows the number only;
+        // the unit (original or converted, e.g. Ltr -> ml) goes
+        // in the Unit column.
+        if (qtyCell) {
+            qtyCell.textContent = displayValue;
+        }
+
+        const unitCell = tr ? tr.querySelector(".unit-cell") : null;
+
+        if (unitCell) {
+            unitCell.textContent = unitText(smart.unit);
+        }
+
+        // The separate "Calculated Quantity" column stays hidden.
+        row.textContent = displayValue + " " + unitText(smart.unit || unit);
+        row.closest(".calculated-quantity-cell").classList.add("hidden");
+    });
+
+    // Swap the column label: Quantity -> Calculated Quantity.
+    const quantityHeader = document.getElementById(
+        "quantityHeader-" + recipeId
+    );
+    if (quantityHeader) {
+        quantityHeader.textContent = t("col_calc_qty");
+    }
+
+    document.getElementById(
+        "calculatedQuantityHeader-" + recipeId
+    ).classList.add("hidden");
+
+    showMessage(
+        "recipeProductionResult-" + recipeId,
+        t("scaling_msg") + " " +
+            Number(scale * 100).toFixed(2) + "%."
+    );
+
+}
+
+
+function clearUserProduction(recipeId) {
+
+    const baseIngredientSelect = document.getElementById(
+        "recipeBaseIngredient-" + recipeId
+    );
+
+    const targetInput = document.getElementById(
+        "recipeTargetOutput-" + recipeId
+    );
+
+    const resultBox = document.getElementById(
+        "recipeProductionResult-" + recipeId
+    );
+
+    if (targetInput) {
+        targetInput.value = "";
+    }
+
+    if (baseIngredientSelect) {
+        baseIngredientSelect.value = "";
+        updateProductionInputMode(recipeId);
+    }
+
+    document.querySelectorAll(
+        ".user-calculated-qty[data-recipe-id='" + recipeId + "']"
+    ).forEach(function (row) {
+        const tr = row.closest("tr");
+        const qtyCell = tr ? tr.querySelector(".qty-cell") : null;
+        const unitCell = tr ? tr.querySelector(".unit-cell") : null;
+
+        row.textContent = "";
+        row.closest(".calculated-quantity-cell").classList.add("hidden");
+
+        // Restore the standard recipe quantity (with smart
+        // unit display: gm -> Kg, ml -> Ltr): number in the
+        // quantity column, unit in the Unit column.
+        const smart = smartDisplay(
+            row.dataset.standardQuantity,
+            row.dataset.standardUnit || ""
+        );
+
+        if (qtyCell) {
+            qtyCell.textContent = formatQuantity(smart.value);
+        }
+
+        if (unitCell) {
+            unitCell.textContent = unitText(smart.unit);
+        }
+    });
+
+    // Swap the column label back: Calculated Quantity -> Quantity.
+    const quantityHeader = document.getElementById(
+        "quantityHeader-" + recipeId
+    );
+    if (quantityHeader) {
+        quantityHeader.textContent = t("col_quantity");
+    }
+
+    document.getElementById(
+        "calculatedQuantityHeader-" + recipeId
+    ).classList.add("hidden");
+
+    if (resultBox) {
+        resultBox.classList.add("hidden");
+        resultBox.classList.remove("error");
+    }
+
+}
+
+
+// =========================================================
+// START
+// =========================================================
+
+LANG = getSavedLang();
+
+applyLang();
+
+initLoginPage();
+
+</script>
+
+
+<script>
+if ("serviceWorker" in navigator
+        && (location.protocol === "https:"
+            || location.hostname === "localhost")) {
+    navigator.serviceWorker.register("sw.js").catch(function () {});
+}
+</script>
+</body>
+
+</html>
