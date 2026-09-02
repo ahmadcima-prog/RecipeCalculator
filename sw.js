@@ -1,5 +1,5 @@
 // Recipe Calculator - offline cache
-const CACHE = "recipes-v202609021723"; // version is auto-bumped by build_calculator.py
+const CACHE = "recipes-v202609021736"; // version is auto-bumped by build_calculator.py
 
 self.addEventListener("install", function (event) {
     event.waitUntil(
@@ -8,7 +8,7 @@ self.addEventListener("install", function (event) {
             // block installation of the whole app.
             return Promise.all(
                 ["./", "index.html", "manifest.webmanifest",
-                 "icon-192.png", "icon-512.png"].map(function (url) {
+                 "icon-192.png?v=2", "icon-512.png?v=2"].map(function (url) {
                     return cache.add(url).catch(function () {});
                 })
             );
