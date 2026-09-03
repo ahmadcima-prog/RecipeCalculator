@@ -1,5 +1,5 @@
 // Recipe Calculator - offline cache
-const CACHE = "recipes-v202609031241"; // version is auto-bumped by build_calculator.py
+const CACHE = "recipes-v202609031242"; // version is auto-bumped by build_calculator.py
 
 self.addEventListener("install", function (event) {
     event.waitUntil(
