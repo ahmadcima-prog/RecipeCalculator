@@ -285,11 +285,6 @@ th {
     min-width: 110px;
 }
 
-.recipe-groups{margin-top:15px}
-.category-group{margin-bottom:12px}
-.category-name{font-weight:bold;font-size:15px;color:#1f2937;background:#e5e7eb;padding:6px 10px;border-radius:6px;margin-bottom:6px}
-.recipe-item{display:block;width:100%;text-align:start;margin:4px 0;padding:9px 12px;background:#f9fafb;border:1px solid #d1d5db;border-radius:6px;font-size:14px;cursor:pointer}
-.recipe-item:hover{background:#eef2ff;border-color:#93c5fd}
 .lang-switch{width:auto;margin:0;padding:9px 16px;background:#2563eb;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:bold;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.25)}
 .lang-switch:hover{background:#1d4ed8}
 .lang-switch-float{position:fixed;top:18px;right:18px;z-index:99}
@@ -504,8 +499,6 @@ th {
             </option>
 
         </select>
-
-        <div id="recipeGroups" class="recipe-groups"></div>
 
         <div id="recipeDetails"></div>
 
@@ -1044,65 +1037,6 @@ function buildRecipeGroups(recipes, select) {
         );
 
     });
-
-    // Visible tappable list: category heading + its recipes.
-    const container =
-        document.getElementById("recipeGroups");
-
-    if (!container) {
-        return;
-    }
-
-    let html = "";
-
-    order.forEach(function (key) {
-
-        html +=
-            '<div class="category-group">' +
-                '<div class="category-name">' +
-                    escapeHtml(groups[key].label) +
-                '</div>';
-
-        groups[key].recipes.forEach(function (recipe) {
-
-            html +=
-                '<button type="button" class="recipe-item" onclick="pickRecipe(' +
-                    recipe.id +
-                ')">' +
-                    escapeHtml(nameByLang(recipe.name_en, recipe.name_ar)) +
-                '</button>';
-
-        });
-
-        html += '</div>';
-
-    });
-
-    container.innerHTML = html;
-
-}
-
-
-function pickRecipe(id) {
-
-    const select =
-        document.getElementById("recipeSelect");
-
-    if (select) {
-        select.value = String(id);
-    }
-
-    loadRecipe();
-
-    const details =
-        document.getElementById("recipeDetailsCard");
-
-    if (details) {
-        details.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
-    }
 
 }
 
